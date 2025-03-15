@@ -56,6 +56,9 @@
                 <a href="index.php?page=datastok"><i class="fa fa-truck fa-fw"></i>Stok</a>
             </li>
             <li>
+                <a href="index.php?page=mrp"><i class="fa fa-calculator fa-fw"></i>MRP</a>
+            </li>
+            <li>
                 <a href="#"><i class="fa fa-th-list fa-users"></i> Supplier<span class="fa arrow"></span></a>
                 <ul class="nav nav-second-level">
                     <li>

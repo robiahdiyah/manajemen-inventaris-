@@ -9,6 +9,9 @@ $cu = new Class_User();
 include_once("config/Class_Stok.php");
 $st = new Class_Stok();
 
+include_once("config/Class_mrp.php");
+$mr = new Class_mrp();
+
 include_once("config/config.php");
 // Mengambil kode barang baru
 include_once("fungsi/nomatbrg.php");
@@ -96,6 +99,10 @@ $db = new Class_Barang();
         else if (isset($_GET['page']) && $_GET['page'] == "datastok") {
 
             include_once("stok/data_stok.php");
+        }
+        else if (isset($_GET['page']) && $_GET['page'] == "mrp") {
+
+            include_once("mrp/data_mrp.php");
         }
         else if (isset($_GET['page']) && $_GET['page'] == "pengaturan") {
 

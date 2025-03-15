@@ -100,7 +100,7 @@ else if ($aksi == "tambahdatapinjam") {
         $db->input_datapeminjaman($nomor_pinjam, $tgl_pinjam, $kode_barang, $nama_barang, $jumlah_pinjam, $peminjam);
  
         // Jalankan perhitungan MRP setelah data peminjaman berhasil disimpan
-        if (hitung_mrp($kode_barang, $jumlah_pinjam)) {
+        if ($db->hitung_mrp($conn, $kode_barang, $jumlah_pinjam, $jumlah_brg_masuk, $jumlah_brg_keluar))  {
             echo "<script>alert('Data peminjaman dan perhitungan MRP berhasil disimpan!'); window.location.href='../index.php?page=peminjaman';</script>";
         } else {
             echo "<script>alert('Data peminjaman berhasil disimpan, tetapi perhitungan MRP gagal!'); window.location.href='../index.php?page=peminjaman';</script>";

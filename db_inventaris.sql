@@ -29,7 +29,7 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `mrp` (
   `id` int(11) NOT NULL,
-  `kode_barang_id` int(11) DEFAULT NULL,
+  `kode_barang` varchar(8) DEFAULT NULL,
   `jml_barangkeluar` int(11) DEFAULT NULL,
   `jml_barangmasuk` int(11) DEFAULT NULL,
   `safety_stock` int(11) DEFAULT NULL,
@@ -41,7 +41,7 @@ CREATE TABLE `mrp` (
 -- Dumping data for table `mrp`
 --
 
-INSERT INTO `mrp` (`id`, `kode_barang_id`, `jml_barangkeluar`, `jml_barangmasuk`, `safety_stock`, `net_requirements`, `tanggal_input_mrp`) VALUES
+INSERT INTO `mrp` (`id`, `kode_barang`, `jml_barangkeluar`, `jml_barangmasuk`, `safety_stock`, `net_requirements`, `tanggal_input_mrp`) VALUES
 (1, 1, 12, 0, 10, 0, '2025-02-22');
 
 -- --------------------------------------------------------
@@ -239,7 +239,7 @@ INSERT INTO `tbl_user` (`id_user`, `username`, `password`) VALUES
 --
 ALTER TABLE `mrp`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `kode_barang_id` (`kode_barang_id`);
+  ADD KEY `kode_barang` (`kode_barang`);
 
 --
 -- Indexes for table `tbl_barang`
@@ -301,7 +301,7 @@ ALTER TABLE `tbl_stok`
 -- Constraints for table `mrp`
 --
 ALTER TABLE `mrp`
-  ADD CONSTRAINT `mrp_ibfk_1` FOREIGN KEY (`kode_barang_id`) REFERENCES `tbl_stok` (`id_stok`);
+  ADD CONSTRAINT `mrp_ibfk_1` FOREIGN KEY (`kode_barang`) REFERENCES `tbl_stok` (`id_stok`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

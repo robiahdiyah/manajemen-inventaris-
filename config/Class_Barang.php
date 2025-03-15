@@ -174,13 +174,13 @@ class Class_Barang
         $data2 = mysqli_query($conn, $sql2);
     }
 
-    function input_barangmasuk($id_barangmasuk, $kode_barang, $nama_barang, $tgl, $jumlah, $kode_supplier)
+    function input_barangmasuk($id_masukbarang, $kode_barang, $nama_barang, $tgl_masuk, $jumlah_masuk, $kode_supplier)
     {
         include("config.php");
 
         // Menyimpan barang masuk
-        $sql1 = "INSERT INTO tbl_masukbarang (id_barangmasuk, kode_barang, nama_barang, tgl, jumlah, kode_supplier)
-             VALUES ('$id_barangmasuk', '$kode_barang', '$nama_barang', '$tgl', '$jumlah', '$kode_supplier')";
+        $sql1 = "INSERT INTO tbl_masukbarang (id_masukbarang, kode_barang, nama_barang, tgl_masuk, jumlah_masuk, kode_supplier)
+             VALUES ('$id_masukbarang', '$kode_barang', '$nama_barang', '$tgl_masuk', '$jumlah_masuk', '$kode_supplier')";
         $data1 = mysqli_query($conn, $sql1);
 
         // Ambil jumlah stok yang sudah ada di tbl_stok
@@ -188,7 +188,7 @@ class Class_Barang
         $result = mysqli_query($conn, $sql_get_stok);
         $stok = mysqli_fetch_assoc($result);
 
-        $new_jml_masuk = ($stok['jml_barangmasuk'] ?? 0) + $jumlah;
+        $new_jml_masuk = ($stok['jml_barangmasuk'] ?? 0) + $jumlah_masuk;
         $total_barang = $new_jml_masuk - ($stok['jml_barangkeluar'] ?? 0);
 
         // Update tbl_stok
@@ -199,10 +199,10 @@ class Class_Barang
         $data2 = mysqli_query($conn, $sql2);
 
         // Update tbl_barang
-        $sql3 = "UPDATE tbl_barang 
-             SET jumlah_brg = '$total_barang' 
-             WHERE kode_barang = '$kode_barang'";
-        $data3 = mysqli_query($conn, $sql3);
+        // $sql3 = "UPDATE tbl_barang 
+        //      SET jumlah_brg = '$total_barang' 
+        //      WHERE kode_barang = '$kode_barang'";
+        // $data3 = mysqli_query($conn, $sql3);
     }
 
 
@@ -210,8 +210,8 @@ class Class_Barang
     {
         include("config.php");
 
-        $sql = "INSERT INTO tbl_keluarbarang (kode_barang, nama_barang, tgl_pinjam, peminjam, jumlah_pinjam)
-        VALUES ('$kode_barang', '$nama_barang', '$tgl_pinjam', '$peminjam', '$jumlah_pinjam')";
+        $sql = "INSERT INTO tbl_keluarbarang (no_pinjam ,kode_barang, nama_barang, tgl_pinjam, peminjam, jumlah_pinjam)
+        VALUES ('$nomor_pinjam','$kode_barang', '$nama_barang', '$tgl_pinjam', '$peminjam', '$jumlah_pinjam')";
         $data = mysqli_query($conn, $sql);
 
         if (!$data) {
@@ -233,10 +233,10 @@ class Class_Barang
         $stok = mysqli_fetch_assoc($result);
 
         $new_jml_keluar = ($stok['jml_barangkeluar'] ?? 0) + $jumlah_pinjam;
-        // $total_barang = ($stok['jml_barangmasuk'] ?? 0) - $new_jml_keluar;
+        $total_barang = ($stok['jml_barangmasuk'] ?? 0) - $new_jml_keluar;
 
         // Update tbl_stok
-        $sql3 = "UPDATE tbl_stok SET jml_barangkeluar = '$new_jml_keluar' WHERE kode_barang = '$kode_barang'";
+        $sql3 = "UPDATE tbl_stok SET jml_barangkeluar = '$new_jml_keluar', total_barang = '$total_barang' WHERE kode_barang = '$kode_barang'";
         $data3 = mysqli_query($conn, $sql3);
 
         if (!$data3) {
@@ -245,39 +245,49 @@ class Class_Barang
     }
 
     function hitung_mrp($conn, $kode_barang, $jumlah_pinjam)
-    {
-        // Ambil data stok dari tbl_stok
-        $query = "SELECT jml_barangmasuk, jml_barangkeluar, safety_stock FROM tbl_stok WHERE kode_barang='$kode_barang'";
-        $result = mysqli_query($conn, $query);
+{
+    // Ambil data stok dari tbl_stok
+    $query = "SELECT jml_barangmasuk, jml_barangkeluar, total_barang FROM tbl_stok WHERE kode_barang = ?";
+    $stmt = mysqli_prepare($conn, $query);
+    mysqli_stmt_bind_param($stmt, "s", $kode_barang);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
 
-        if (!$result) {
-            die("Error: Query gagal dijalankan - " . mysqli_error($conn));
-        }
-
-        $stok = mysqli_fetch_assoc($result);
-
-        if (!$stok) {
-            die("Error: Data stok tidak ditemukan untuk kode barang $kode_barang");
-        }
-
-        $jumlah_brg_masuk = $stok["jml_barangmasuk"] ?? 0;
-        $jumlah_brg_keluar = $stok["jml_barangkeluar"] ?? 0;
-        $safety_stock = $stok["safety_stock"] ?? 0;
-
-        // Hitung Net Requirements
-        $net_requirements = max(0, $jumlah_pinjam - ($jumlah_brg_masuk - $jumlah_brg_keluar) + $safety_stock);
-
-        // Simpan hasil perhitungan ke tabel MRP
-        $insert_mrp = "INSERT INTO mrp (kode_barang, jml_barangkeluar, jml_barangmasuk, safetystok, net_requirements, tanggal_input_mrp)
-                   VALUES ('$kode_barang', '$jumlah_brg_keluar', '$jumlah_brg_masuk', '$safety_stock', '$net_requirements', NOW())";
-
-        if (mysqli_query($conn, $insert_mrp)) {
-            return true;
-        } else {
-            echo "Error: " . mysqli_error($conn); // Untuk debugging jika terjadi error
-            return false;
-        }
+    if (!$result) {
+        die("Error: Query gagal dijalankan - " . mysqli_error($conn));
     }
+
+    $stok = mysqli_fetch_assoc($result);
+
+    if (!$stok) {
+        die("Error: Data stok tidak ditemukan untuk kode barang $kode_barang");
+    }
+
+    $jumlah_brg_masuk = $stok["jml_barangmasuk"] ?? 0;
+    $jumlah_brg_keluar = $stok["jml_barangkeluar"] ?? 0;
+    $safety_stock = $stok["total_barang"] ?? 0;
+
+    // Hitung stok saat ini
+    $current_stock = $jumlah_brg_masuk - $jumlah_brg_keluar;
+
+    // Hitung Net Requirements
+    $net_requirements = max(0, $jumlah_pinjam - $current_stock + $safety_stock);
+
+    // Simpan hasil perhitungan ke tabel MRP
+    $insert_mrp = "INSERT INTO mrp (kode_barang, jml_barangkeluar, jml_barangmasuk, safety_stock, net_requirements, tanggal_input_mrp)
+                   VALUES (?, ?, ?, ?, ?, NOW())";
+
+    $stmt_insert = mysqli_prepare($conn, $insert_mrp);
+    mysqli_stmt_bind_param($stmt_insert, "siiii", $kode_barang, $jumlah_brg_keluar, $jumlah_brg_masuk, $safety_stock, $net_requirements);
+
+    if (mysqli_stmt_execute($stmt_insert)) {
+        return true;
+    } else {
+        echo "Error: " . mysqli_error($conn); // Untuk debugging jika terjadi error
+        return false;
+    }
+}
+
 
 
 
