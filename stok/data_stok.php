@@ -29,7 +29,7 @@
                             <th>Nama Barang</th>
                             <th>Jumlah Barang Masuk</th>
                             <th>Jumlah Barang Keluar</th>
-                            <!-- <th>Total Barang</th> -->
+                            <th>Total Barang</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -47,7 +47,7 @@
                                     <td><?= $row['nama_barang'] ?></td>
                                     <td><?= $row['jml_barangmasuk'] ?></td>
                                     <td><?= $row['jml_barangkeluar'] ?></td>
-                                    <!-- <td><?= $row['total_barang'] ?></td> -->
+                                    <td><?= $row['total_barang'] ?></td>
 
                                 </tr>
                         <?php }

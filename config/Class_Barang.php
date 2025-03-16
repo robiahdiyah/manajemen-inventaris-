@@ -264,7 +264,7 @@ class Class_Barang
     }
 
     $jumlah_brg_masuk = $stok["jml_barangmasuk"] ?? 0;
-    $jumlah_brg_keluar = $stok["jml_barangkeluar"] ?? 0;
+    $jumlah_brg_keluar = $jumlah_pinjam;
     $safety_stock = $stok["total_barang"] ?? 0;
 
     // Hitung stok saat ini
