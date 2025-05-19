@@ -31,40 +31,47 @@ if ($aksi == "tambah") {
 }
 
 // ===========================================================================================
-// BARANG MASUK
+// PESANAN MASUK
 // ===========================================================================================
-else if ($aksi == "tambahbarangmasuk") {
+else if ($aksi == "tambahpesananmasuk") {
 
-    $nama_supplier = $_POST["nama_supplier"];
-    $id_barangmasuk = $_POST["id_masukbarang"];
-    $nama_barang = $_POST["nama_barang"];
-    $tgl = $_POST["tgl_masuk"];
-    $jumlah = $_POST["jumlah_masuk"];
+    $product_id = $_POST["product_id"];
+    $invoice = $_POST["invoice"];
+    $quantity = $_POST["quantity"];
+    $tgl_masuk = $_POST["tgl_masuk"];
 
-    // Ambil kode_supplier dari nama_supplier
-    $kdsup = mysqli_query($conn, "SELECT kode_supplier FROM tbl_supplier WHERE nama_supplier='$nama_supplier'");
-    $skode = mysqli_fetch_assoc($kdsup);
-    $kode_supplier = $skode["kode_supplier"] ?? '';
+    $db->input_barangmasuk($invoice, $product_id, $tgl_masuk, $quantity);
 
-    // Ambil kode_barang dari nama_barang
-    $kdbarang = mysqli_query($conn, "SELECT kode_barang FROM tbl_barang WHERE nama_barang='$nama_barang'");
-    $skodebrg = mysqli_fetch_assoc($kdbarang);
-    $kode_barang = $skodebrg["kode_barang"] ?? '';
-
-    // Ambil data stok sebelumnya
-    $stok = mysqli_query($conn, "SELECT jml_barangmasuk, jml_barangkeluar FROM tbl_stok WHERE kode_barang='$kode_barang'");
-    $tmpstok = mysqli_fetch_assoc($stok);
-
-    $jml_barangmasuk = ($tmpstok["jml_barangmasuk"] ?? 0) + $jumlah;
-    $jml_barangkeluar = $tmpstok["jml_barangkeluar"] ?? 0;
-    $totalbarang = $jml_barangmasuk - $jml_barangkeluar;
-
-    // Input barang masuk dan update stok
-    $db->input_barangmasuk($id_barangmasuk, $kode_barang, $nama_barang, $tgl, $jumlah, $kode_supplier);
-
-    echo "<script>alert('Barang masuk berhasil ditambahkan'); window.location.href='../index.php?page=inputbarangmasuk';</script>";
+    echo "<script>alert('Barang masuk berhasil ditambahkan'); window.location.href='../index.php?page=inputpesananmasuk';</script>";
 }
 
+
+// ===========================================================================================
+// FILTER BULAN
+// ===========================================================================================
+else if ($aksi == "filterbulan") {
+
+    $bulan = $_POST["bulan"];
+    $data = $db->tampil_pesananmasuk($bulan);
+
+    if (empty($data)) {
+        echo "<div class='alert alert-warning'>Tidak ada data untuk bulan tersebut.</div>";
+    } else {
+        echo "<table width='100%' class='table table-striped table-bordered table-hover'>";
+        echo "<thead><tr><th>No</th><th>Nama Barang</th><th>Jumlah Masuk</th><th>Tanggal Masuk</th></tr></thead><tbody>";
+        $no = 1;
+        foreach ($data as $row) {
+            echo "<tr>";
+            echo "<td>$no</td>";
+            echo "<td>{$row['name']}</td>";
+            echo "<td>{$row['quantity']}</td>";
+            echo "<td>{$row['bulan']}</td>";
+            echo "</tr>";
+            $no++;
+        }
+        echo "</tbody></table>";
+    }
+}
 
 // ===========================================================================================
 // PINJAM BARANG
@@ -98,9 +105,9 @@ else if ($aksi == "tambahdatapinjam") {
     } else {
         // Simpan data peminjaman ke database
         $db->input_datapeminjaman($nomor_pinjam, $tgl_pinjam, $kode_barang, $nama_barang, $jumlah_pinjam, $peminjam);
- 
+
         // Jalankan perhitungan MRP setelah data peminjaman berhasil disimpan
-        if ($db->hitung_mrp($conn, $kode_barang, $jumlah_pinjam, $jumlah_brg_masuk, $jumlah_brg_keluar))  {
+        if ($db->hitung_mrp($conn, $kode_barang, $jumlah_pinjam, $jumlah_brg_masuk, $jumlah_brg_keluar)) {
             echo "<script>alert('Data peminjaman dan perhitungan MRP berhasil disimpan!'); window.location.href='../index.php?page=peminjaman';</script>";
         } else {
             echo "<script>alert('Data peminjaman berhasil disimpan, tetapi perhitungan MRP gagal!'); window.location.href='../index.php?page=peminjaman';</script>";

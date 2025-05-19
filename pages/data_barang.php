@@ -15,37 +15,37 @@
             <div class="panel-body">
                 <table width="100%" class="table table-striped table-bordered table-hover" cellpadding="0" cellspacing="0" id="dataTables-example">
                     <thead>
-        <?php 
-        
-            if (is_array($db->tampil_data()) && count($db->tampil_data()) > 0) {
+                        <?php
 
-         ?>
-                        <tr>
-                            <th>No</th>
-                            <th>Kode Barang</th>
-                            <th>Nama Barang</th>
-                            <th>Stok</th>
-                        </tr>
+                        if (is_array($db->tampil_data()) && count($db->tampil_data()) > 0) {
+
+                        ?>
+                            <tr>
+                                <th>No</th>
+                                <th>Kode Barang</th>
+                                <th>Nama Barang</th>
+                                <th>Stok</th>
+                            </tr>
                     </thead>
                     <tbody>
-    <?php 
-        $no = 1;
+                        <?php
+                            $no = 1;
 
-        foreach ($db->tampil_data() as $row) {
+                            foreach ($db->tampil_data() as $row) {
 
-     ?>
-                    <tr>
-                        <td><?=$no++?></td>
-                        <td><?=$row['kode_barang']?></td>
-                        <td><?=$row['nama_barang']?></td>
-                        <td><a href="?id=<?=$row['kode_barang']?>&page=update">Edit</a> - <a href="?hapus&id=<?=$row['kode_barang']?>" onclick="return confirm('Yakin mau dihapus?');">Hapus</a></td>
-                      </tr>
-    <?php } 
-}?>
+                        ?>
+                            <tr>
+                                <td><?= $no++ ?></td>
+                                <td><?= $row['kode_barang'] ?></td>
+                                <td><?= $row['nama_barang'] ?></td>
+                                <td><a href="?id=<?= $row['kode_barang'] ?>&page=update">Edit</a> - <a href="?hapus&id=<?= $row['kode_barang'] ?>" onclick="return confirm('Yakin mau dihapus?');">Hapus</a></td>
+                            </tr>
+                    <?php }
+                        } ?>
                     </tbody>
                 </table>
                 <!-- /.table-responsive -->
-               
+
             </div>
             <!-- /.panel-body -->
         </div>

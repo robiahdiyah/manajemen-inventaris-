@@ -115,7 +115,7 @@ body {
 .btn-outline {
   color: inherit;
   background-color: transparent;
-  transition: all .5s;
+  transition: all 0.5s;
 }
 .btn-primary.btn-outline {
   color: #428bca;

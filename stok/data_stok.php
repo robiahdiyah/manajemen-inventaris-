@@ -17,6 +17,17 @@
             <div class="panel-heading">
                 Stok Barang
             </div>
+            <div class="text-right" style="margin-bottom: 1px;">
+                <button style="background-color: darkcyan;
+    color: #fff; 
+    border: none; 
+    border-radius: 5px; 
+    padding: 10px 20px; 
+    margin-top: 5px;
+    font-size: 16px; 
+    cursor: pointer; 
+    transition: all 0.3s ease-in-out;" class=" btn-tambah-stok" onclick="window.location.href='?page=inputstok'">Tambah Stok</button>
+            </div>
             <!-- /.panel-heading -->
             <div class="panel-body">
                 <table width="100%" class="table table-striped table-bordered table-hover" cellpadding="0" cellspacing="0" id="dataTables-example">
@@ -25,11 +36,10 @@
                         ?>
                         <tr>
                             <th>No</th>
-                            <th>Kode Barang</th>
-                            <th>Nama Barang</th>
-                            <th>Jumlah Barang Masuk</th>
-                            <th>Jumlah Barang Keluar</th>
-                            <th>Total Barang</th>
+                            <th>Nama Komponen</th>
+                            <th>Project On Hand</th>
+                            <th>Safety Stock</th>
+
                         </tr>
                     </thead>
                     <tbody>
@@ -43,11 +53,10 @@
                         ?>
                                 <tr>
                                     <td><?= $no++ ?></td>
-                                    <td><?= $row['kode_barang'] ?></td>
-                                    <td><?= $row['nama_barang'] ?></td>
-                                    <td><?= $row['jml_barangmasuk'] ?></td>
-                                    <td><?= $row['jml_barangkeluar'] ?></td>
-                                    <td><?= $row['total_barang'] ?></td>
+                                    <td><?= $row['name'] ?></td>
+                                    <td><?= $row['quantity'] ?></td>
+                                    <td><?= $row['safety_stock'] ?></td>
+
 
                                 </tr>
                         <?php }
